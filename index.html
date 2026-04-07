@@ -52,9 +52,10 @@
 
     <!-- MAIN CONTENT -->
     <main class="lg:ml-64 min-h-screen">
+        
         <header class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-40">
             <div>
-                <h2 id="page-title" class="font-bold text-slate-800 uppercase text-sm tracking-widest">Front Office</h2>
+                <h2 id="page-title" class="font-bold text-slate-800 text-sm uppercase tracking-widest">Front Office</h2>
                 <p id="current-time" class="text-xs text-slate-400 font-mono"></p>
             </div>
             <div class="flex items-center gap-4">
@@ -68,6 +69,7 @@
 
         <div class="p-4 md:p-8 max-w-5xl mx-auto pb-32 lg:pb-8">
             
+            <!-- 1. FRONT OFFICE -->
             <section id="fo" class="step-card active">
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
                     <h3 class="text-xl font-bold mb-6">Pendaftaran Pasien Baru</h3>
@@ -85,6 +87,7 @@
                 </div>
             </section>
 
+            <!-- 2. PERAWAT -->
             <section id="perawat" class="step-card">
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
                     <h3 class="text-xl font-bold mb-6 text-green-600">Pemeriksaan Vital</h3>
@@ -99,6 +102,7 @@
                 </div>
             </section>
 
+            <!-- 3. DOKTER -->
             <section id="dokter" class="step-card">
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
                     <h3 class="text-xl font-bold mb-6 text-red-600">Diagnosa Dokter</h3>
@@ -110,10 +114,11 @@
                 </div>
             </section>
 
+            <!-- 4. FARMASI & KASIR -->
             <section id="farmasi" class="step-card">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                        <h4 class="font-bold mb-4 flex items-center gap-2"><span>💊</span> Farmasi</h4>
+                        <h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-600"><span>💊</span> Farmasi</h4>
                         <select id="sel_farmasi" class="w-full p-4 bg-slate-50 border rounded-2xl mb-4" onchange="loadResep()"></select>
                         <div id="resep_box" class="p-4 bg-yellow-50 rounded-2xl border border-yellow-100 text-yellow-800 text-sm italic min-h-[100px]">Pilih pasien...</div>
                     </div>
@@ -121,18 +126,43 @@
                         <h4 class="font-bold mb-4 flex items-center gap-2 text-indigo-400"><span>💳</span> Billing Kasir</h4>
                         <div class="space-y-4">
                             <div class="flex justify-between border-b border-slate-800 pb-2">
-                                <span class="text-slate-500 text-xs uppercase font-bold">Pasien:</span>
+                                <span class="text-slate-500 text-xs uppercase font-bold tracking-widest">Pasien:</span>
                                 <span id="bill_nama" class="font-bold text-sm">-</span>
                             </div>
-                            <input type="number" id="b_dokter" placeholder="Biaya Konsultasi" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl outline-none">
-                            <input type="number" id="b_obat" placeholder="Biaya Obat" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl outline-none">
-                            <button onclick="prosesBilling()" class="w-full bg-indigo-500 p-4 rounded-xl font-bold hover:bg-indigo-400 shadow-lg shadow-indigo-900/40">SIMPAN & SELESAI</button>
+                            <input type="number" id="b_dokter" oninput="hitungTotal()" placeholder="Biaya Konsultasi" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl outline-none focus:border-indigo-500">
+                            <input type="number" id="b_obat" oninput="hitungTotal()" placeholder="Biaya Obat" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl outline-none focus:border-indigo-500">
+                            
+                            <!-- BAGIAN TOTAL BIAYA -->
+                            <div class="flex justify-between items-center py-2 border-t border-slate-800 mt-2">
+                                <span class="text-indigo-400 text-xs uppercase font-bold tracking-widest">Total Bayar:</span>
+                                <span id="bill_total" class="font-bold text-xl text-white">Rp 0</span>
+                            </div>
+
+                            <button onclick="prosesBilling()" class="w-full bg-indigo-500 p-4 rounded-xl font-bold hover:bg-indigo-400 shadow-lg shadow-indigo-900/40 transition-all">SIMPAN & SELESAI</button>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- 5. HISTORI -->
             <section id="histori" class="step-card">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm mb-6">
+                    <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Hapus Histori Berdasarkan Waktu</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-500">DARI TANGGAL</label>
+                            <input type="date" id="hapus_mulai" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 ring-indigo-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-500">SAMPAI TANGGAL</label>
+                            <input type="date" id="hapus_selesai" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 ring-indigo-500">
+                        </div>
+                        <button onclick="hapusHistoriRange()" class="bg-red-50 text-red-600 border border-red-100 p-3 rounded-xl font-bold text-sm hover:bg-red-600 hover:text-white transition-all">
+                            HAPUS DATA
+                        </button>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                     <table class="w-full text-left text-xs md:text-sm">
                         <thead class="bg-slate-50 border-b">
@@ -152,19 +182,19 @@
     <!-- MOBILE NAVIGATION -->
     <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <button onclick="showStep('fo')" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">📝</span><span class="text-[9px] font-bold">FO</span>
+            <span class="text-xl">📝</span><span class="text-[9px] font-bold uppercase tracking-tighter">FO</span>
         </button>
         <button onclick="showStep('perawat')" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">🩺</span><span class="text-[9px] font-bold">PRW</span>
+            <span class="text-xl">🩺</span><span class="text-[9px] font-bold uppercase tracking-tighter">PRW</span>
         </button>
         <button onclick="showStep('dokter')" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">👨‍⚕️</span><span class="text-[9px] font-bold">DR</span>
+            <span class="text-xl">👨‍⚕️</span><span class="text-[9px] font-bold uppercase tracking-tighter">DR</span>
         </button>
         <button onclick="showStep('farmasi')" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">💊</span><span class="text-[9px] font-bold">BILLING</span>
+            <span class="text-xl">💊</span><span class="text-[9px] font-bold uppercase tracking-tighter">KASIR</span>
         </button>
         <button onclick="showStep('histori')" class="flex flex-col items-center gap-1 text-slate-400">
-            <span class="text-xl">📜</span><span class="text-[9px] font-bold">LOG</span>
+            <span class="text-xl">📜</span><span class="text-[9px] font-bold uppercase tracking-tighter">LOG</span>
         </button>
     </nav>
 
@@ -184,37 +214,28 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // LOGIKA MQTT: SEKARANG ADMIN JUGA MENDENGARKAN DATA
         client.on('connect', () => {
-            console.log("Admin Terkoneksi & Sync...");
             document.getElementById('mqtt-status').innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> MQTT Online';
             document.getElementById('mqtt-status').classList.add('text-green-400');
-            
-            client.subscribe(TOPIC_SYNC); // Penting agar Admin di GitHub Pages menarik data dari Local
+            client.subscribe(TOPIC_SYNC);
             syncToMQTT();
         });
 
         client.on('message', (topic, message) => {
             if (topic === TOPIC_SYNC) {
                 const incoming = JSON.parse(message.toString());
-                console.log("Data diterima dari MQTT. Mensinkronkan...");
-                
                 antrian = incoming.antrian;
                 histori = incoming.histori;
-
-                // Update LocalStorage agar tetap awet
                 localStorage.setItem('rs_antrian', JSON.stringify(antrian));
                 localStorage.setItem('rs_histori', JSON.stringify(histori));
-
-                // Refresh UI saat ini
                 updateDropdowns();
-                renderHistori();
+                if(document.getElementById('histori').classList.contains('active')) renderHistori();
             }
         });
 
         function syncToMQTT() {
             if(client.connected) {
-                const payload = { antrian, histori: histori.slice(0, 15) };
+                const payload = { antrian, histori: histori.slice(0, 50) };
                 client.publish(TOPIC_SYNC, JSON.stringify(payload), { retain: true });
             }
         }
@@ -222,9 +243,7 @@
         function showStep(id) {
             document.querySelectorAll('.step-card').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('page-title').innerText = id === 'fo' ? 'FRONT OFFICE' : id.toUpperCase();
-            
-            // UI Sidebar Update
+            document.getElementById('page-title').innerText = id.toUpperCase();
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-white/10', 'border-l-4', 'border-indigo-500');
                 if(btn.dataset.step === id) btn.classList.add('bg-white/10', 'border-l-4', 'border-indigo-500');
@@ -236,9 +255,10 @@
         function daftarPasien() {
             const id = document.getElementById('fo_id').value.toUpperCase().trim();
             const nama = document.getElementById('fo_nama').value.trim();
-            if(!id || !nama) return alert("Lengkapi data!");
-            antrian[id] = { id, nama, status: 'daftar', timestamp: new Date().toLocaleTimeString() };
-            saveAndSync();
+            if(!id || !nama) return alert("Isi ID dan Nama!");
+            antrian[id] = { id, nama, status: 'daftar', timestamp: new Date().toLocaleTimeString(), rawDate: new Date().toISOString() };
+            save();
+            alert("Pendaftaran Berhasil");
             document.getElementById('fo_id').value = ''; document.getElementById('fo_nama').value = '';
         }
 
@@ -247,8 +267,8 @@
             if(!id) return alert("Pilih pasien!");
             antrian[id].vital = { bb: document.getElementById('p_bb').value, suhu: document.getElementById('p_suhu').value };
             antrian[id].status = 'perawat_done';
-            saveAndSync();
-            alert("Data terkirim.");
+            save();
+            alert("Data Vital Terkirim");
         }
 
         function simpanDokter() {
@@ -257,43 +277,72 @@
             antrian[id].diagnosa = document.getElementById('d_diag').value;
             antrian[id].resep = document.getElementById('d_resep').value;
             antrian[id].status = 'dokter_done';
-            saveAndSync();
-            alert("Diagnosa selesai.");
+            save();
+            alert("Diagnosa Disimpan");
+        }
+
+        // FUNGSI HITUNG TOTAL REAL-TIME
+        function hitungTotal() {
+            const bD = parseInt(document.getElementById('b_dokter').value || 0);
+            const bO = parseInt(document.getElementById('b_obat').value || 0);
+            const total = bD + bO;
+            document.getElementById('bill_total').innerText = 'Rp ' + total.toLocaleString();
         }
 
         function prosesBilling() {
             const id = document.getElementById('sel_farmasi').value;
             const bD = parseInt(document.getElementById('b_dokter').value || 0);
             const bO = parseInt(document.getElementById('b_obat').value || 0);
-            if(!id || bD <= 0) return alert("Pilih pasien dan input biaya dokter!");
+            if(!id) return alert("Pilih pasien!");
             
-            const data = { ...antrian[id], biaya: bD + bO, selesai: new Date().toLocaleString() };
+            const data = { ...antrian[id], biaya: bD + bO, selesai: new Date().toLocaleString(), selesaiISO: new Date().toISOString() };
             histori.unshift(data);
             delete antrian[id];
-            saveAndSync();
+            
+            // Reset form billing
+            document.getElementById('b_dokter').value = '';
+            document.getElementById('b_obat').value = '';
+            document.getElementById('bill_total').innerText = 'Rp 0';
+            
+            save();
+            alert("Billing Selesai");
             showStep('histori');
         }
 
-        function saveAndSync() {
+        function save() {
             localStorage.setItem('rs_antrian', JSON.stringify(antrian));
             localStorage.setItem('rs_histori', JSON.stringify(histori));
-            syncToMQTT();
             updateDropdowns();
-            renderHistori();
+            syncToMQTT();
+        }
+
+        function hapusHistoriRange() {
+            const mulai = document.getElementById('hapus_mulai').value;
+            const selesai = document.getElementById('hapus_selesai').value;
+            if(!mulai || !selesai) return alert("Pilih kedua tanggal!");
+            const startDate = new Date(mulai); startDate.setHours(0,0,0,0);
+            const endDate = new Date(selesai); endDate.setHours(23,59,59,999);
+            if(startDate > endDate) return alert("Tanggal tidak valid!");
+            if(confirm(`Hapus histori ${mulai} s/d ${selesai}?`)) {
+                histori = histori.filter(h => {
+                    const tgl = new Date(h.selesaiISO);
+                    return !(tgl >= startDate && tgl <= endDate);
+                });
+                save(); renderHistori();
+            }
         }
 
         function updateDropdowns() {
             const sp = document.getElementById('sel_perawat');
             const sd = document.getElementById('sel_dokter');
             const sf = document.getElementById('sel_farmasi');
-            const opt = '<option value="">-- PILIH PASIEN --</option>';
+            const opt = '<option value="">-- Pilih Pasien --</option>';
             if(sp) sp.innerHTML = opt; if(sd) sd.innerHTML = opt; if(sf) sf.innerHTML = opt;
-
             Object.values(antrian).forEach(p => {
                 const o = `<option value="${p.id}">${p.nama} (${p.id})</option>`;
-                if(p.status === 'daftar' && sp) sp.innerHTML += o;
-                if(p.status === 'perawat_done' && sd) sd.innerHTML += o;
-                if(p.status === 'dokter_done' && sf) sf.innerHTML += o;
+                if(p.status === 'daftar') sp.innerHTML += o;
+                if(p.status === 'perawat_done') sd.innerHTML += o;
+                if(p.status === 'dokter_done') sf.innerHTML += o;
             });
         }
 
@@ -317,14 +366,13 @@
             if(!tbody) return;
             tbody.innerHTML = histori.map(h => `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
-                    <td class="p-4 font-bold text-slate-700">${h.nama}<br><span class="text-[10px] text-slate-400 font-mono">${h.id}</span></td>
+                    <td class="p-4 font-bold text-slate-700">${h.nama}<br><span class="text-[10px] text-slate-400 font-mono uppercase">${h.id}</span></td>
                     <td class="p-4 text-slate-600 italic text-xs">${h.diagnosa || '-'}</td>
-                    <td class="p-4 text-green-600 font-bold text-right">Rp${h.biaya.toLocaleString()}</td>
+                    <td class="p-4 text-green-600 font-bold text-right font-mono">Rp${h.biaya.toLocaleString()}</td>
                 </tr>
-            `).join('');
+            `).join('') || '<tr><td colspan="3" class="p-10 text-center text-slate-300">Tidak ada data histori</td></tr>';
         }
 
-        // Initialize UI
         updateDropdowns();
     </script>
 </body>
